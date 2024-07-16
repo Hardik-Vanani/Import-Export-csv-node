@@ -29,6 +29,7 @@ app.get("/csv", (req, res) => {
     res.render("index");
 });
 
+// Import data from the CSV file into Database
 app.post("/csv", upload.single("csvfile"), async (req, res) => {
     try {
         if (!req.file) {
@@ -42,6 +43,7 @@ app.post("/csv", upload.single("csvfile"), async (req, res) => {
         const data = [];
         const response = await csv().fromFile(req.file.path);
 
+        // Below commented code use for import particular fields
         // for (let i = 0; i < response.length; i++) {
         //     data.push({
         //         username: response[i].name,
@@ -57,6 +59,7 @@ app.post("/csv", upload.single("csvfile"), async (req, res) => {
     }
 });
 
+// Download the CSV file from the database
 app.get("/exportData", async (req, res) => {
     try {
         const users = [];
@@ -67,10 +70,12 @@ app.get("/exportData", async (req, res) => {
             users.push({ username, password, mobile });
         });
 
+        // Fix the fields of the CSV file
         const csvField = ["name", "pass", "phone"];
         const csvparser = new csvParser({ csvField });
         const csvData = csvparser.parse(users);
 
+        // Set the Header to download the CSV file
         res.setHeader("Content-Type", "text/csv");
         res.setHeader("Content-Disposition", "attachment: filename=userData.csv");
 
